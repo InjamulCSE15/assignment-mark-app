@@ -1,0 +1,11 @@
+#showMarksTable tr td:nth-child(2),
+#showMarksTable tr td:last-child {
+    text-align: center;
+}
+
+/* .modal-body {
+    background-image: url('assets/imgs/12.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+} */
+/* height: 400px; */

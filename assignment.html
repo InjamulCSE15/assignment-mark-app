@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment Marks Generator</title>
+  <!-- Include jsPDF library -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="assets/fontawesome-free-6.4.2-web/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <h3 class="text-center my-5">Assignment Result Sheet</h3>
+    <form id="studentForm">
+      <div class="row g-3 justify-content-md-between mb-3">
+        <div class="col col-md-4">
+          <input type="number" min="1" class="form-control" id="assignmentNo" placeholder="Assignment No 02" required>
+        </div>
+        <div class="col col-md-4">
+          <input type="number" min="50" class="form-control" id="assignmentMarks"
+            placeholder="Total Marks of Assignment 50" required>
+        </div>
+      </div>
+      <h4 class="my-2">Marks Distribution List</h4>
+      <div class="row g-2">
+        <div class="col-lg-6">
+          <input type="text" id="taskName" class="form-control" placeholder="Name of Task" required>
+        </div>
+        <div class="col-6 col-lg-2">
+          <input type="number" id="getMarks" class="form-control" placeholder="Obtainable marks" min="0" required>
+        </div>
+        <div class="col-6 col-lg-2">
+          <input type="number" id="taskMarks" class="form-control" placeholder="Task Marks" min="0" required>
+        </div>
+        <div class="d-grid col-lg-2">
+          <button type="button" id="add-btn" class="btn btn-success" onclick="addStudent()">Add</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="table-responsive mt-4">
+      <h4 class="my-2">Assignment Marks Table</h4>
+      <table id="marksTable" class="table table-striped table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th class="">Name of Tasks</th>
+            <th class="">Obtained Marks</th>
+            <th class="">Marks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <!--Marks data-->
+        <tfoot>
+          <tr>
+            <td></td>
+            <td>
+              <div class="d-flex justify-content-start align-items-center">
+                <p class="mb-0">Obtained Score: </p><input id="totalObtainedScore" type="number" value="0"
+                  class="form-control w-50 border-0 bg-transparent fs-5 fw-bold" readonly />
+              </div>
+            </td>
+            <td>
+              <div class="d-flex justify-content-start align-items-center">
+                <p class="mb-0">Total Marks: </p><input id="totalAssignmentMarks" type="number" value="0"
+                  class="form-control w-50 border-0 bg-transparent fs-5 fw-bold" readonly />
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="text-end"><button id="clearTableBtn" class="btn btn-danger btn-sm disabled" onclick="clearTable()">Reset
+        Table Data</button></div>
+
+    <button class="btn btn-success" onclick="preview()">Preview</button>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+      aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+            <button type="button" id="modal-close" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 ">
+              <div class="col-lg-6">
+                <h5>Assignment No : <span id="assignment-No"></span></h5>
+              </div>
+              <div class="col-lg-6">
+                <h5 class="text-end">Score : <span id="totalObtainedScoreShow"></span> / <span
+                    id="assignment-Marks"></span></h5>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-borderedless previewTable">
+                <thead>
+                  <tr class="table-light">
+                    <th class="">Name of Tasks</th>
+                    <th class="text-center">Obtained Marks</th>
+                    <th class="text-center">Marks</th>
+                  </tr>
+                </thead>
+                <tbody id="showMarksTable" class="table-group-divider"></tbody>
+              
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-primary" onclick="downloadPDF()">Download PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
